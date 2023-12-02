@@ -4,8 +4,15 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.*;
 import java.util.Calendar;
 import javax.swing.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class Diary extends JFrame {
 
@@ -22,6 +29,9 @@ public class Diary extends JFrame {
     int mm; // 기준점이 되는 월
     int startDay; // 월의 시작 요일
     int lastDate; // 월의 마지막 날
+
+    // 일기 데이터를 저장할 Map
+    private Map<String, String> diaryData = new HashMap<>();
 
     // 생성자
     public Diary() {
@@ -124,9 +134,28 @@ public class Diary extends JFrame {
         createDate(); // 날짜 박스 생성
         printDate(); // 상자에 날짜 그리기
 
+        // 추가된 부분: 파일에서 일기 데이터를 읽어와 메모리에 저장
+        readDiaryFromFile();
+
         setVisible(true);
-        setBounds(100, 100, 780, 780);
+        setBounds(100, 100, 600, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+
+    // 추가된 부분: 파일에서 일기 데이터를 읽어오는 메서드
+    private void readDiaryFromFile() {
+        diaryData.clear(); // 기존 데이터를 초기화합니다.
+        try (BufferedReader reader = new BufferedReader(new FileReader("diary_data.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":", 2);
+                if (parts.length == 2) {
+                    diaryData.put(parts[0], parts[1]);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     //현재날짜 객체 만들기
@@ -145,7 +174,7 @@ public class Diary extends JFrame {
     //요일 생성
     public void createDay() {
         for(int i = 0; i < 7; i++){
-            DateBox dayBox = new DateBox(dayAr[i], Color.gray, 100, 70);
+            DateBox dayBox = new DateBox(dayAr[i], Color.gray, 70, 50);
             p_center.add(dayBox);
         }
     }
@@ -153,9 +182,65 @@ public class Diary extends JFrame {
     //날짜 생성
     public void createDate() {
         for(int i = 0; i < dayAr.length*6; i++) {
-            DateBox dateBox = new DateBox("", Color.LIGHT_GRAY, 100, 100);
+            DateBox dateBox = new DateBox("", Color.LIGHT_GRAY, 70, 70);
             p_center.add(dateBox);
             dateBoxAr[i] = dateBox;
+
+            // 날짜 박스에 클릭 이벤트 추가
+            dateBox.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    openDiaryWindow(dateBox.day);
+                }
+
+                private void openDiaryWindow(String selectedDate) {
+                    JFrame diaryWindow = new JFrame("일기 작성 - " + selectedDate);
+                    JTextArea diaryTextArea = new JTextArea();
+                    JScrollPane scrollPane = new JScrollPane(diaryTextArea);
+                    JButton saveButton = new JButton("저장");
+
+                    saveButton.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            // 여기에 일기 저장 로직을 추가할 수 있습니다.
+                            String diaryContent = diaryTextArea.getText();
+                            saveDiary(selectedDate, diaryContent);
+
+                            // 저장 로직 추가
+                            // ...
+                            JOptionPane.showMessageDialog(diaryWindow, "일기가 저장되었습니다.");
+                            // 추가된 부분: 파일에서 일기 데이터를 읽어와 메모리에 저장
+                            readDiaryFromFile();
+                            diaryWindow.dispose(); // 윈도우 닫기
+                        }
+                    });
+
+                    // 일기를 불러와서 TextArea에 표시
+                    String savedDiary = diaryData.get(selectedDate);
+                    if (savedDiary != null) {
+                        diaryTextArea.setText(savedDiary);
+                    }
+
+                    diaryWindow.setLayout(new BorderLayout());
+                    diaryWindow.add(scrollPane, BorderLayout.CENTER);
+                    diaryWindow.add(saveButton, BorderLayout.SOUTH);
+
+                    diaryWindow.setSize(400, 300);
+                    diaryWindow.setLocationRelativeTo(null); // 중앙에 표시
+                    diaryWindow.setVisible(true);
+                }
+                // 일기 저장 메서드 추가
+                private void saveDiary(String date, String content) {
+                    diaryData.put(date, content);
+                    try (PrintWriter writer = new PrintWriter(new FileWriter("diary_data.txt", true))) {
+                        writer.println(date + ":" + content);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+
+
+            });
         }
     }
 
