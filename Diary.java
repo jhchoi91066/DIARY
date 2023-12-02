@@ -5,69 +5,124 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
+import javax.swing.*;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-public class Diary extends JFrame{
+public class Diary extends JFrame {
 
     String[] dayAr = {"Sun", "Mon", "Tue", "Wen", "Thur", "Fri", "Sat"};
-    DateBox[] dateBoxAr = new DateBox[dayAr.length*6];
+    DateBox[] dateBoxAr = new DateBox[dayAr.length * 6];
     JPanel p_north;
     JButton bt_prev;
     JLabel lb_title;
     JButton bt_next;
-    JPanel p_center; //날짜 박스 처리할 영역
-    Calendar cal; //날짜 객체
+    JPanel p_center; // 날짜 박스 처리할 영역
+    Calendar cal; // 날짜 객체
 
-    int yy; //기준점이 되는 년도
-    int mm; //기준점이 되는 월
-    int startDay; //월의 시작 요일
-    int lastDate; //월의 마지막 날
-    
+    int yy; // 기준점이 되는 년도
+    int mm; // 기준점이 되는 월
+    int startDay; // 월의 시작 요일
+    int lastDate; // 월의 마지막 날
 
-    //생성자
+    // 생성자
     public Diary() {
-        //디자인
+
+        setTitle("Daily Private");
+        // 디자인
         p_north = new JPanel();
         bt_prev = new JButton("이전");
         lb_title = new JLabel("년도 올 예정", SwingConstants.CENTER);
         bt_next = new JButton("다음");
         p_center = new JPanel();
 
-        //라벨에 폰트 설정
+        // 라벨에 폰트 설정
         lb_title.setFont(new Font("Arial-Black", Font.BOLD, 25));
         lb_title.setPreferredSize(new Dimension(300, 30));
 
+        // 감정 표현 아이콘 추가
+        JPanel emotionPanel = new JPanel();
+        String[] emotionImagePaths = {
+                "/바탕화면/학교/객체지향프로그래밍/emotion/angry.png",
+                "/바탕화면/학교/객체지향프로그래밍/emotion/fear.png",
+                "/바탕화면/학교/객체지향프로그래밍/emotion/frustrated.png",
+                "/바탕화면/학교/객체지향프로그래밍/emotion/joy.png",
+                "/바탕화면/학교/객체지향프로그래밍/emotion/sad.png"
+        };
+
+        for (String imagePath : emotionImagePaths) {
+            ImageIcon icon = new ImageIcon(imagePath);
+            JLabel label = new JLabel(icon);
+            emotionPanel.add(label);
+        }
+
+        p_north.add(emotionPanel);
         p_north.add(bt_prev);
         p_north.add(lb_title);
         p_north.add(bt_next);
         add(p_north, BorderLayout.NORTH);
         add(p_center);
 
-        //이전 버튼을 눌렀을 때 전 월로 이동해야함
+        // 이전 버튼을 눌렀을 때 전 월로 이동해야함
         bt_prev.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateMonth(-1);
             }
         });
 
-        //다음 버튼을 눌렀을 때 다음 달로 이동해야함
+        // 다음 버튼을 눌렀을 때 다음 달로 이동해야함
         bt_next.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 updateMonth(1);
             }
         });
 
-        getCurrentDate(); //현재 날짜 객체 생성
-        getDateInfo(); //날짜 객체로부터 정보들 구하기
-        setDateTitle(); //타이틀 라벨에 날짜 표시하기
-        createDay(); //요일 박스 생성
-        createDate(); //날짜 박스 생성
-        printDate(); //상자에 날짜 그리기
+        // 메뉴 바 추가 (2번 기능)
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("***");
+        JMenuItem alarmItem = new JMenuItem("알람 설정");
+        JMenuItem searchItem = new JMenuItem("키워드 검색");
+        JMenuItem darkModeItem = new JMenuItem("다크 모드 전환");
+
+        // 알람, 키워드 검색, 다크 모드 전환 기능 추가 (3번 기능)
+        alarmItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                setAlarm();
+            }
+
+            private void setAlarm() {
+            }
+        });
+
+        searchItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                searchByKeyword();
+            }
+
+            private void searchByKeyword() {
+            }
+        });
+
+        darkModeItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                switchToDarkMode();
+            }
+
+            private void switchToDarkMode() {
+            }
+        });
+
+        menu.add(alarmItem);
+        menu.add(searchItem);
+        menu.add(darkModeItem);
+        menuBar.add(menu);
+
+        setJMenuBar(menuBar);
+
+        getCurrentDate(); // 현재 날짜 객체 생성
+        getDateInfo(); // 날짜 객체로부터 정보들 구하기
+        setDateTitle(); // 타이틀 라벨에 날짜 표시하기
+        createDay(); // 요일 박스 생성
+        createDate(); // 날짜 박스 생성
+        printDate(); // 상자에 날짜 그리기
 
         setVisible(true);
         setBounds(100, 100, 780, 780);
