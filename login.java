@@ -29,6 +29,7 @@ public class login extends JFrame {
         panel.add(passwordLabel);
 
         passwordField = new JPasswordField();
+        passwordField.setHorizontalAlignment(JPasswordField.CENTER); // 가운데 정렬 설정
         panel.add(passwordField);
 
         JButton loginButton = new JButton("로그인");
