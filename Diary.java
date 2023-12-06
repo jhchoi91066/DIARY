@@ -251,7 +251,7 @@ public class Diary extends JFrame {
     //요일 생성
     public void createDay() {
         for(int i = 0; i < 7; i++){
-            DateBox dayBox = new DateBox(dayAr[i], Color.black, 70, 50);
+            DateBox dayBox = new DateBox(dayAr[i], Color.GRAY, 70, 50);
             p_center.add(dayBox);
         }
     }
