@@ -193,7 +193,7 @@ public class Diary extends JFrame {
             textColor = Color.darkGray;
         }
 
-        calendarColor = Color.white; // 
+        calendarColor = Color.GRAY; 
 
     
         p_center.setBackground(backgroundColor);
