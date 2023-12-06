@@ -33,6 +33,10 @@ public class Diary extends JFrame {
     // 일기 데이터를 저장할 Map
     private Map<String, String> diaryData = new HashMap<>();
 
+    // 추가된 부분: 감정 선택을 위한 패널 초기화
+    JPanel emotionSelectionPanel;
+    String selectedEmotion = "";
+
     // 생성자
     public Diary() {
 
@@ -45,24 +49,46 @@ public class Diary extends JFrame {
         p_center = new JPanel();
 
         // 라벨에 폰트 설정
-        lb_title.setFont(new Font("Arial-Black", Font.BOLD, 25));
+        lb_title.setFont(new Font("Arial-Black", Font.BOLD,25));
         lb_title.setPreferredSize(new Dimension(300, 30));
+
 
         // 감정 표현 아이콘 추가
         JPanel emotionPanel = new JPanel();
         String[] emotionImagePaths = {
-                "/바탕화면/학교/객체지향프로그래밍/emotion/angry.png",
-                "/바탕화면/학교/객체지향프로그래밍/emotion/fear.png",
-                "/바탕화면/학교/객체지향프로그래밍/emotion/frustrated.png",
-                "/바탕화면/학교/객체지향프로그래밍/emotion/joy.png",
-                "/바탕화면/학교/객체지향프로그래밍/emotion/sad.png"
+                "emotion/angry.png",
+                "emotion/fear.png",
+                "emotion/frustrated.png",
+                "emotion/joy.png",
+                "emotion/sad.png"
         };
+
+
 
         for (String imagePath : emotionImagePaths) {
             ImageIcon icon = new ImageIcon(imagePath);
             JLabel label = new JLabel(icon);
-            emotionPanel.add(label);
+            // 감정 아이콘 클릭 이벤트 추가
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    // 클릭한 감정을 저장
+                    selectedEmotion = imagePath;
+
+                    // 선택한 감정을 화면에 표시하는 부분 (예를 들어, 경고 창)
+                    JOptionPane.showMessageDialog(null, "선택한 감정: " + selectedEmotion);
+                }
+            });
+            // 추가된 부분: 감정 선택을 위한 패널 초기화
+            emotionSelectionPanel = new JPanel();
+
+
+            emotionSelectionPanel.add(label);
         }
+
+
+
+
 
         p_north.add(emotionPanel);
         p_north.add(bt_prev);
@@ -174,7 +200,7 @@ public class Diary extends JFrame {
     //요일 생성
     public void createDay() {
         for(int i = 0; i < 7; i++){
-            DateBox dayBox = new DateBox(dayAr[i], Color.gray, 70, 50);
+            DateBox dayBox = new DateBox(dayAr[i], Color.black, 70, 50);
             p_center.add(dayBox);
         }
     }
@@ -193,18 +219,26 @@ public class Diary extends JFrame {
                     openDiaryWindow(dateBox.day);
                 }
 
+                // 추가된 부분: 감정 선택 패널을 날짜 창에 추가하는 메서드
+                private void addEmotionSelectionPanel(JFrame diaryWindow) {
+                    diaryWindow.add(emotionSelectionPanel, BorderLayout.SOUTH);
+                }
+
                 private void openDiaryWindow(String selectedDate) {
                     JFrame diaryWindow = new JFrame("일기 작성 - " + selectedDate);
                     JTextArea diaryTextArea = new JTextArea();
                     JScrollPane scrollPane = new JScrollPane(diaryTextArea);
                     JButton saveButton = new JButton("저장");
 
+                    // 추가된 부분: 감정 선택 패널을 날짜 창에 추가
+                    addEmotionSelectionPanel(diaryWindow);
+
                     saveButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             // 여기에 일기 저장 로직을 추가할 수 있습니다.
                             String diaryContent = diaryTextArea.getText();
-                            saveDiary(selectedDate, diaryContent);
+                            saveDiary(selectedDate, diaryContent,selectedEmotion);
 
                             // 저장 로직 추가
                             // ...
@@ -230,14 +264,16 @@ public class Diary extends JFrame {
                     diaryWindow.setVisible(true);
                 }
                 // 일기 저장 메서드 추가
-                private void saveDiary(String date, String content) {
-                    diaryData.put(date, content);
+                // 일기 저장 메서드 추가
+                private void saveDiary(String date, String content, String emotion) {
+                    diaryData.put(date, content + ":" + emotion);
                     try (PrintWriter writer = new PrintWriter(new FileWriter("diary_data.txt", true))) {
-                        writer.println(date + ":" + content);
+                        writer.println(date + ":" + content + ":" + emotion);
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
                 }
+
 
 
             });
