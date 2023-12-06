@@ -37,6 +37,14 @@ public class Diary extends JFrame {
     JPanel emotionSelectionPanel;
     String selectedEmotion = "";
 
+
+
+    // 다크모드 설정 코드 
+    private boolean isDarkMode = false; // 일반모드가 기본상태로 지정
+   
+   
+   
+   
     // 생성자
     public Diary() {
 
@@ -166,8 +174,57 @@ public class Diary extends JFrame {
         setVisible(true);
         setBounds(100, 100, 600, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-    }
 
+
+
+        JButton darkModeButton = new JButton("다크 모드");  //다크모드
+        darkModeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                isDarkMode = !isDarkMode; // 다크모드가 아닐 경우
+                toggleDarkMode(); // 다크모드로 변경
+            }
+        });
+        p_north.add(darkModeButton); // 다크모드 버튼을 오른쪽 상단에 위치
+    }
+    public void toggleDarkMode() {
+        Color calendarColor;
+        Color backgroundColor;
+        Color textColor;  // 색 지정
+
+        if (isDarkMode) {
+            //다크모드 일때 색깔 지정
+            backgroundColor = Color.darkGray; // 배경색
+            textColor = Color.WHITE; // 글자색 
+        } else {
+            // 다크모드가 아닐 때 색깔 지정
+            backgroundColor = Color.LIGHT_GRAY;  
+            textColor = Color.darkGray;
+        }
+
+        calendarColor = Color.white; // 
+
+    
+        p_center.setBackground(backgroundColor);
+        // 위에서 설정한 색들을 불러오는 기능
+
+        lb_title.setForeground(textColor);
+        lb_title.setBackground(backgroundColor);
+        lb_title.setOpaque(true);
+        bt_prev.setBackground(backgroundColor);
+        bt_prev.setForeground(textColor);
+        bt_next.setBackground(backgroundColor);
+        bt_next.setForeground(textColor);
+
+        getContentPane().setBackground(backgroundColor);
+
+        for (DateBox dateBox : dateBoxAr) {
+            dateBox.setBackground(calendarColor);
+            dateBox.color = calendarColor; // Update box color
+            dateBox.repaint(); // Repaint the box
+        }
+        
+        repaint();
+    }
     // 추가된 부분: 파일에서 일기 데이터를 읽어오는 메서드
     private void readDiaryFromFile() {
         diaryData.clear(); // 기존 데이터를 초기화합니다.
