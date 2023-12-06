@@ -124,7 +124,6 @@ public class Diary extends JFrame {
         JMenu menu = new JMenu("***");
         JMenuItem alarmItem = new JMenuItem("알람 설정");
         JMenuItem searchItem = new JMenuItem("키워드 검색");
-        JMenuItem darkModeItem = new JMenuItem("다크 모드 전환");
 
         // 알람, 키워드 검색, 다크 모드 전환 기능 추가 (3번 기능)
         alarmItem.addActionListener(new ActionListener() {
@@ -145,18 +144,10 @@ public class Diary extends JFrame {
             }
         });
 
-        darkModeItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                switchToDarkMode();
-            }
-
-            private void switchToDarkMode() {
-            }
-        });
 
         menu.add(alarmItem);
         menu.add(searchItem);
-        menu.add(darkModeItem);
+
         menuBar.add(menu);
 
         setJMenuBar(menuBar);
@@ -186,6 +177,7 @@ public class Diary extends JFrame {
         });
         p_north.add(darkModeButton); // 다크모드 버튼을 오른쪽 상단에 위치
     }
+
     public void toggleDarkMode() {
         Color calendarColor;
         Color backgroundColor;
@@ -225,6 +217,8 @@ public class Diary extends JFrame {
         
         repaint();
     }
+
+
     // 추가된 부분: 파일에서 일기 데이터를 읽어오는 메서드
     private void readDiaryFromFile() {
         diaryData.clear(); // 기존 데이터를 초기화합니다.
