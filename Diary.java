@@ -189,8 +189,9 @@ public class Diary extends JFrame {
             textColor = Color.WHITE; // 글자색 
         } else {
             // 다크모드가 아닐 때 색깔 지정
-            backgroundColor = Color.LIGHT_GRAY;  
+            backgroundColor = Color.WHITE;  
             textColor = Color.darkGray;
+            calendarColor = Color.WHITE; 
         }
 
         calendarColor = Color.GRAY; 
